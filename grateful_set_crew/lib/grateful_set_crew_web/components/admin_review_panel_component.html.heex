@@ -1,0 +1,39 @@
+<%= live_component(@binding_id) do %>
+  <div class="space-y-8">
+    <!-- 1. CLIENT LEAD REVIEW PANEL -->
+    <div>
+      <h2 class="text-xl font-bold text-indigo-700 border-b pb-2 mb-4">Client Lead Funnel Review</h2>
+      <% if @leads.any? do %>
+        <div class="space-y-6">
+          <.lead_card lead={@leads[0]} on_submit_review={handle_client_action} />
+        </div>
+      <% else %>
+        <p class="text-gray-500 italic">No new leads submitted for review.</p>
+      <% end %>
+    </div>
+
+    <!-- 2. CONTRACT REVIEW PANEL -->
+    <div>
+      <h2 class="text-xl font-bold text-green-700 border-b pb-2 mb-4">Contract Approval & Finance</h2>
+      <% if @contracts.any? do %>
+        <div class="space-y-6">
+          <.contract_card contract={@contracts[0]} on_approve={handle_admin_approval} />
+        </div>
+      <% else %>
+        <p class="text-gray-500 italic">No contracts pending administrator review.</p>
+      <% end %>
+    </div>
+
+    <!-- 3. WORKER MANAGEMENT PANEL -->
+    <div>
+      <h2 class="text-xl font-bold text-red-700 border-b pb-2 mb-4">Worker & Credentialing Management</h2>
+      <% if @workers.any? do %>
+        <div class="space-y-6">
+          <.worker_card worker={@workers[0]} on_manage_worker={handle_worker_action} />
+        </div>
+      <% else %>
+        <p class="text-gray-500 italic">No workers require management actions.</p>
+      <% end %>
+
+  </div>
+<% end %>

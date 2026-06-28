@@ -1,0 +1,55 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <div class="mx-auto max-w-2xl">
+    <div class="rounded-lg bg-white p-8 shadow-lg">
+      <h1 class="text-3xl font-bold text-navy mb-2">Account Settings</h1>
+      <p class="text-gray-600 mb-8">Manage your account email address and password settings</p>
+
+      <div class="space-y-8">
+        <div>
+          <h2 class="text-xl font-semibold text-navy mb-6">Change Email</h2>
+          <.form :let={f} for={@email_changeset} action={~p"/users/settings"} id="update_email">
+            <input type="hidden" name="action" value="update_email" />
+
+            <.input
+              field={f[:email]}
+              type="email"
+              label="Email"
+              autocomplete="username"
+              spellcheck="false"
+              required
+            />
+
+            <.button variant="primary" phx-disable-with="Changing..." class="mt-6">Change Email</.button>
+          </.form>
+        </div>
+
+        <div class="border-t border-gray-200 pt-8">
+          <h2 class="text-xl font-semibold text-navy mb-6">Change Password</h2>
+          <.form :let={f} for={@password_changeset} action={~p"/users/settings"} id="update_password">
+            <input type="hidden" name="action" value="update_password" />
+
+            <.input
+              field={f[:password]}
+              type="password"
+              label="New password"
+              autocomplete="new-password"
+              spellcheck="false"
+              required
+            />
+            <.input
+              field={f[:password_confirmation]}
+              type="password"
+              label="Confirm new password"
+              autocomplete="new-password"
+              spellcheck="false"
+              required
+            />
+            <.button variant="primary" phx-disable-with="Changing..." class="mt-6">
+              Save Password
+            </.button>
+          </.form>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

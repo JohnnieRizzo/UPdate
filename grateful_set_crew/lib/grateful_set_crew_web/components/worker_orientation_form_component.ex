@@ -1,0 +1,138 @@
+defmodule GratefulSetCrewWeb.WorkerOrientationLive do
+  use GratefulSetCrewWeb, :live_view
+
+  @impl true
+  def mount(_params, _session, socket) do
+    # Load the current worker profile or initialize a new application record
+    worker_id = 1
+    socket = assign(socket, current_user_id: worker_id)
+
+    # Fetch necessary data for forms (e.g., existing applications, available templates)
+    initial_application = fetch_worker_application(worker_id)
+
+    {:ok, assign(socket, application: initial_application)}
+  end
+
+  @impl true
+  def handle_event("submit_credentials", _params, socket) do
+    # 1. Handle file uploads (SSN/ID are extremely sensitive and require specific encryption handling here)
+    # 2. Create/Update Credential records in the DB
+    # Placeholder success state
+    {:noreply, assign(socket, status: :success)}
+  end
+
+  @impl true
+  def handle_event("complete_orientation", _params, socket) do
+    # 1. Validate all mandatory data (SSN, IDs, Availability).
+    # 2. Call the context function to finalize the profile status.
+    case GratefulSetCrew.Jobs.update_orientation_status(
+           socket.assigns[:current_user_id],
+           :oriented
+         ) do
+      {:ok, _updated_app} ->
+        # If successful, we now have a functional WorkerProfile record.
+        # Notify the admin/system that this worker is ready for work.
+        {:noreply, assign(socket, status: :profile_ready)}
+
+      {:error, reason} ->
+        {:noreply, assign(socket, status: :error, message: inspect(reason))}
+    end
+  end
+
+  # Helper function (should be moved to Jobs context)
+  defp fetch_worker_application(_worker_id) do
+    # Logic to find existing application record by worker ID
+    %{contact_email: "", uploaded_docs: []}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="container mx-auto py-10 max-w-4xl">
+      <h1 class="text-3xl font-extrabold mb-2 text-indigo-700">Worker Orientation & Profile Setup</h1>
+      <p class="text-lg mb-8 text-gray-600">
+        Complete these steps to activate your profile and become available for job assignments.
+      </p>
+
+      <div :if={assigns[:status]} class="bg-green-50 text-green-800 p-4 rounded mb-8">
+        {assigns[:status]}
+      </div>
+      
+    <!-- Step 1: Personal Identification -->
+      <div class="bg-white p-6 rounded-lg shadow mb-8 border border-gray-200">
+        <h2 class="text-2xl font-bold mb-4 text-red-700">1. Personal & Legal Information</h2>
+
+        <.form id="credential-form" phx-change="validate">
+          <!-- Basic contact info -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="ssn" class="block text-sm font-medium text-gray-700">
+                SSN (Social Security Number)
+              </label>
+              <.input type="text" for={nil} id="ssn" placeholder="XXX-XX-XXXX" />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              <.input
+                type="email"
+                for={@application[:contact_email]}
+                id="email"
+                placeholder="required@email.com"
+              />
+            </div>
+          </div>
+          
+    <!-- Document Uploads -->
+          <div class="mt-6 border p-4 rounded-lg bg-gray-50">
+            <h3 class="font-semibold mb-3 text-indigo-700">Credential Documents (Upload)</h3>
+            <%= for doc <- @application[:uploaded_docs] || [] do %>
+              <label for={doc.id} class="block cursor-pointer hover:bg-yellow-50 p-2 rounded">
+                {doc.name} (Upload)
+              </label>
+            <% end %>
+          </div>
+        </.form>
+      </div>
+      
+    <!-- Step 2: Profile Details & Availability -->
+      <div class="bg-white p-6 rounded-lg shadow mb-8 border border-gray-200">
+        <h2 class="text-2xl font-bold mb-4 text-green-700">2. Profile Setup</h2>
+        
+    <!-- Availability Times -->
+        <div class="mb-4">
+          <label for="availability" class="block text-sm font-medium text-gray-700 mb-1">
+            Available Hours/Days (e.g., Weekdays 9am-5pm, Weekend only)
+          </label>
+          <.input type="text" id="availability" placeholder="Monday mornings and Friday afternoons." />
+        </div>
+        
+    <!-- Emergency Contact -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="emergency_contact_name" class="block text-sm font-medium text-gray-700">
+              Emergency Contact Name
+            </label>
+            <.input type="text" id="emergency-contact-name" />
+          </div>
+          <div>
+            <label for="emergency_phone" class="block text-sm font-medium text-gray-700">
+              Emergency Phone Number
+            </label>
+            <.input type="tel" id="emergency-phone" />
+          </div>
+        </div>
+      </div>
+      
+    <!-- Step 3: Final Submission -->
+      <div class="flex justify-center pt-4">
+        <.button
+          phx-click="complete_orientation"
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-12 rounded-lg transition duration-150 ease-in-out shadow-lg disabled:opacity-50"
+        >
+          Submit Orientation & Activate Profile
+        </.button>
+      </div>
+    </div>
+    """
+  end
+end

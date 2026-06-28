@@ -1,0 +1,50 @@
+# fly.toml app configuration file generated for grateful-set-crew-delicate-dust-2229 on 2026-05-21T16:31:36-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'grateful-set-crew-deux'
+primary_region = 'sjc'
+kill_signal = 'SIGTERM'
+kill_timeout = '5s'
+
+[build]
+
+
+[deploy]
+  release_command = 'bin/grateful_set_crew eval GratefulSetCrew.Release.migrate'
+
+[env]
+  ERL_AFLAGS = '-proto_dist inet6_tcp'
+  LOG_LEVEL = 'info'
+  PHX_HOST = 'grateful-set-crew.fly.dev'
+  PHX_SERVER = 'true'
+
+[processes]
+  app = ''
+
+[http_service]
+  internal_port = 4000
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 1000
+    soft_limit = 550
+
+  [[http_service.checks]]
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'get'
+    path = '/'
+    protocol = 'http'
+
+[[vm]]
+  memory = '2gb'
+  cpus = 1
+  memory_mb = 2048
+
+[[statics]]
+  guest_path = '/app/priv/static'
+  url_prefix = '/static'

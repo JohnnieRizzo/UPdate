@@ -1,0 +1,121 @@
+<.form for={@lead_form_attributes} id="client-lead-form" phx-change="validate" phx-submit="submit_lead">
+  <fieldset class="border border-gray-200 p-6 rounded-lg mb-6 bg-white shadow-sm">
+    <legend class="text-xl font-semibold text-indigo-700 px-1">General Contact Information</legend>
+
+    <!-- General Info Group -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <div>
+        <.input type="text" for={@lead_form_attributes[:company_name]} id="company-name" label="Company/Individual Name" placeholder="Acme Corp or John Doe" required />
+      </div>
+      <div>
+        <.input type="email" for={@lead_form_attributes[:contact_email]} id="contact-email" label="Contact Email" placeholder="client@example.com" required />
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <label for="tax-id" class="block text-sm font-medium text-gray-700">Tax ID / EIN (If applicable)</label>
+      <.input type="text" for={@lead_form_attributes[:tax_id]} id="tax-id" placeholder="EIN or N/A" />
+    </div>
+
+    <div class="mt-4">
+      <label for="phone" class="block text-sm font-medium text-gray-700">Primary Phone Number</label>
+      <.input type="tel" for={@lead_form_attributes[:primary_phone]} id="primary-phone" placeholder="(555) 123-4567" />
+    </div>
+
+    <div class="mt-4 col-span-full">
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Detailed Scope of Work / Needs Description</label>
+        <.textarea for={@lead_form_attributes[:client_description]} id="description" rows="4" placeholder="Please detail the type of gig, expected duration, and general requirements..." required />
+    </div>
+  </fieldset>
+
+  <!-- Venue & Location Section -->
+  <fieldset class="border border-gray-200 p-6 rounded-lg mb-6 bg-white shadow-sm">
+    <legend class="text-xl font-semibold text-indigo-700 px-1">Venue and Site Details</legend>
+
+    <!-- Venue Type Selector -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Is this a Private/Non-Public Venue?</label>
+      <div class="flex space-x-4">
+        <input type="radio" name={:venue_type} value="public" checked={true} id="venue-public" />
+        <label for="venue-public" class="text-sm font-medium text-gray-700">Public Venue</label>
+
+        <input type="radio" name={:venue_type} value="private" id="venue-private" />
+        <label for="venue-private" class="text-sm font-medium text-gray-700">Private/Residential Venue</label>
+      </div>
+    </div>
+
+    <!-- Location Inputs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <div>
+            <label for="venue-name" class="block text-sm font-medium text-gray-700">Venue Name (Required)</label>
+            <.input type="text" for={@lead_form_attributes[:venue_name]} id="venue-name" placeholder="Madison Square Garden / John Smith's Home" required />
+        </div>
+        <div>
+            <label for="target-location-address" class="block text-sm font-medium text-gray-700">Full Address (Street, City, Zip)</label>
+            <.input type="text" for={@lead_form_attributes[:target_location_address]} id="target-location-address" placeholder="123 Main St, Miami, FL 33101" required />
+        </div>
+    </div>
+
+    <!-- Map Integration Placeholder -->
+    <div class="mt-6 border p-4 rounded-lg bg-gray-50">
+      <h3 class="font-semibold text-indigo-700 mb-2">Location Mapping</h3>
+      <p class="text-sm text-gray-500">A map widget will be embedded here (e.g., Google Maps API) allowing users to pinpoint the exact coordinates.</p>
+    </div>
+
+  </fieldset>
+
+  <!-- Scope & Staffing Section -->
+  <fieldset class="border border-gray-200 p-6 rounded-lg mb-6 bg-white shadow-sm">
+    <legend class="text-xl font-semibold text-indigo-700 px-1">Scope of Work & Staffing Needs</legend>
+
+    <!-- Staffing/Equipment List -->
+    <div class="mb-4 mt-2">
+        <label for="staffing-needs" class="block text-sm font-medium text-gray-700 mb-1">Required Staff & Equipment (Multi-select)</label>
+        <.input type="text" multiple for={@lead_form_attributes[:staffing_needs]} id="staffing-needs" placeholder="e.g., 2 Electricians, 4 Lighting Rigging Team, Mixer Board" />
+    </div>
+
+    <!-- Client Contacts (POCs) -->
+    <div class="mt-6 border p-4 rounded-lg bg-yellow-50/50">
+        <h3 class="font-semibold text-gray-800 mb-2">Points of Contact (POCs)</h3>
+        <p class="text-sm text-gray-600">List the key decision-makers and their role (e.g., Jane Doe - Client Liaison).</p>
+    </div>
+
+  </fieldset>
+
+  <!-- Financial Section -->
+  <fieldset class="border border-gray-200 p-6 rounded-lg mb-6 bg-white shadow-sm">
+    <legend class="text-xl font-semibold text-indigo-700 px-1">Financial Terms & Budget</legend>
+
+    <!-- Budget and Pricing -->
+    <div class="grid grid-cols-2 gap-6 mb-4">
+        <div>
+            <label for="budget" class="block text-sm font-medium text-gray-700">Client's Estimated Budget Range</label>
+            <.input type="text" for={@lead_form_attributes[:budget_range]} id="budget" placeholder="$10k - $25k" />
+        </div>
+        <div>
+             <label for="estimated-total-price" class="block text-sm font-medium text-gray-700">Estimated Total Project Price (Upon Completion)</label>
+            <.input type="number" step="0.01" for={@lead_form_attributes[:estimated_total_price]} id="estimated-total-price" placeholder="0.00" />
+        </div>
+    </div>
+
+    <!-- Deposit Details -->
+     <div class="grid grid-cols-2 gap-6 mb-4">
+        <div>
+            <label for="deposit-amount" class="block text-sm font-medium text-gray-700">Required Deposit Amount</label>
+            <.input type="number" step="0.01" for={@lead_form_attributes[:deposit_amount]} id="deposit-amount" placeholder="500.00" />
+        </div>
+        <div>
+            <label for="tax-id-company-alternative" class="block text-sm font-medium text-gray-700">Company Tax ID (Alternative Identifier)</label>
+            <.input type="text" for={@lead_form_attributes[:tax_id_company_alternative]} id="tax-id-company-alternative" placeholder="Optional Company Registration #" />
+        </div>
+    </div>
+
+  </fieldset>
+
+  <!-- Submission Button -->
+  <div class="pt-4">
+      <.button phx-click="submit_lead" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-150 ease-in-out shadow-lg disabled:opacity-50">
+        Submit Lead for Agent Review
+      </.button>
+  </div>
+</.form>

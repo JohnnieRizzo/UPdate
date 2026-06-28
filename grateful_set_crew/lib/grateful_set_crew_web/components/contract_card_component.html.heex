@@ -1,0 +1,51 @@
+<%= live_component(@binding_id) do %>
+  <div class="border border-l-4 border-green-500 bg-green-50 p-6 rounded-lg shadow-sm">
+    <h3 class="text-2xl font-bold text-green-800 mb-2">Contract for: <%= @contract.client_company_name %></h3>
+    <p class="text-md text-gray-600 mb-4">Job Scope: <%= @contract.scope_of_work %></p>
+
+    <!-- Status Tracker -->
+    <div class="mb-6 p-3 bg-white rounded-lg shadow flex items-center justify-between">
+      <span class="text-sm font-medium text-gray-600 uppercase mr-4">Current Status:</span>
+      <span class="font-bold px-4 py-1 rounded-full text-sm capitalize <%= get_status_class(@contract.status) %>">
+        <%= @contract.status %>
+      </span>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="grid grid-cols-2 gap-4 mb-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Deposit Required</label>
+        <p class="text-xl font-bold text-red-800"><%= format_money(@contract.deposit_required) %></p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Total Estimated Price</label>
+        <p class="text-xl font-bold text-green-800"><%= format_money(@contract.estimated_total_price) %></p>
+      </div>
+    </div>
+
+    <!-- Actions Area -->
+    <div class="flex flex-wrap gap-3 mt-8 pt-4 border-t">
+      <% if @current_scope.user.role == "admin" do %>
+        <%# Approval Button: Only visible when status is 'pending_review' or similar pre-approval state %>
+        <% if @contract.status == "pending_review" do %>
+          <.button phx-click="on_approve" class="bg-green-600 hover:bg-green-700 text-white transition">
+            ✅ Admin Approve Contract
+          </.button>
+        <% end %>
+
+        <%# Deposit Verification Button: Visible only if approved but deposit is not paid %>
+        <% if @contract.status == "approved" && !@contract.deposit_verified? do %>
+          <.button phx-click="verify_deposit" class="bg-yellow-600 hover:bg-yellow-700 text-white transition">
+            Verify Deposit Payment (Webhook)
+          </.button>
+        <% end %>
+
+      <% end %>
+
+      <!-- Generic Action for other roles -->
+      <.button phx-click="view_full_details" class="border border-gray-300 hover:bg-gray-100 transition">
+        View Full Documents / Details
+      </.button>
+    </div>
+  </div>
+<% end %>

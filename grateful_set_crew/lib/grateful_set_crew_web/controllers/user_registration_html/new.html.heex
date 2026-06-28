@@ -1,0 +1,73 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <div class="mx-auto max-w-sm">
+    <div class="rounded-xl bg-zinc-900 border border-zinc-800 p-8">
+      <div class="h-0.5 bg-gradient-to-r from-[#D4AF37] via-[#f0d060] to-[#D4AF37] -mx-8 -mt-8 mb-8 rounded-t-xl"></div>
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-white">Sign Up</h1>
+        <p class="mt-4 text-zinc-400">
+          Already registered?
+          <.link navigate={~p"/users/log-in"} class="font-semibold text-[#D4AF37] hover:text-[#c9a227]">
+            Log in
+          </.link>
+          to your account.
+        </p>
+      </div>
+
+      <.form :let={f} for={@changeset} action={~p"/users/register"}>
+        <div class="mb-8">
+          <label class="block text-sm font-semibold text-zinc-300 mb-4">I want to:</label>
+          <div class="space-y-3">
+            <label class="flex items-center p-4 border-2 border-zinc-700 rounded-xl cursor-pointer hover:border-[#D4AF37] transition-colors" phx-click="select_role" phx-value-role="crew">
+              <input type="radio" name="user[role]" value="crew" class="w-4 h-4 text-[#D4AF37]" />
+              <span class="ml-3">
+                <span class="font-semibold text-white">Find Work</span>
+                <p class="text-sm text-zinc-400">I'm a crew member looking for jobs</p>
+              </span>
+            </label>
+            <label class="flex items-center p-4 border-2 border-zinc-700 rounded-xl cursor-pointer hover:border-[#D4AF37] transition-colors" phx-click="select_role" phx-value-role="client">
+              <input type="radio" name="user[role]" value="client" class="w-4 h-4 text-[#D4AF37]" checked />
+              <span class="ml-3">
+                <span class="font-semibold text-white">Post Jobs</span>
+                <p class="text-sm text-zinc-400">I want to hire crew members</p>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <.input
+          field={f[:email]}
+          type="email"
+          label="Email"
+          autocomplete="username"
+          spellcheck="false"
+          required
+          phx-mounted={JS.focus()}
+        />
+
+        <!-- Crew-specific fields -->
+        <% role = @changeset.changes[:role] || @changeset.data.role || "client" %>
+        <%= if role == "crew" do %>
+          <.input
+            field={f[:location]}
+            type="text"
+            label="Location"
+            placeholder="e.g., San Francisco, CA"
+            spellcheck="false"
+          />
+
+          <.input
+            field={f[:union]}
+            type="text"
+            label="Union (Optional)"
+            placeholder="e.g., IATSE, Teamsters"
+            spellcheck="false"
+          />
+        <% end %>
+
+        <.button phx-disable-with="Creating account..." class="w-full bg-[#D4AF37] text-black hover:bg-[#c9a227] font-semibold rounded-lg px-6 py-3 transition-colors mt-6">
+          Create Account
+        </.button>
+      </.form>
+    </div>
+  </div>
+</Layouts.app>

@@ -1,0 +1,44 @@
+# Ignore git
+.git
+.gitignore
+
+# Ignore dependencies
+_build/
+deps/
+.mix/
+
+# Ignore assets
+node_modules/
+priv/static/
+.tailwind_watching
+
+# Ignore generated files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Ignore development files
+.env
+.env.local
+
+# Ignore test files
+test/
+spec/
+
+# Ignore CI/CD files
+.github/
+.gitlab-ci.yml
+
+# Ignore documentation
+README.md
+docs/
+
+# Ignore IDEs
+.vscode/
+.idea/
+*.iml
+
+# Ignore system files
+.wrangler/
+.open-next/

@@ -1,0 +1,39 @@
+<%= live_component(@binding_id) do %>
+  <div class="border border-l-4 border-red-500 bg-red-50 p-6 rounded-lg shadow-sm">
+    <h3 class="text-2xl font-bold text-red-800 mb-1">Worker: <%= @worker.full_name %></h3>
+    <p class="text-md text-gray-600 mb-4">Status: <span class="font-semibold px-3 py-1 rounded-full text-sm capitalize bg-red-200 text-red-800"><%= @worker.status %></span></p>
+
+    <!-- Worker Info Summary -->
+    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+      <div><label class="block text-gray-500">ID:</label><p class="font-mono"><%= @worker.id %></p></div>
+      <div><label class="block text-gray-500">Email:</label><p class="font-mono"><%= @worker.contact_email %></p></div>
+    </div>
+
+    <!-- Actions Area -->
+    <div class="flex flex-wrap gap-3 mt-8 pt-4 border-t">
+      <%# Only Admin can perform these actions %>
+      <% if @current_scope.user.role == "admin" do %>
+
+        <!-- Worker Status Change Button (The core control) -->
+        <.button phx-click="change_worker_status" class="bg-red-600 hover:bg-red-700 text-white transition">
+          Manage Status (Approve / Fire / Hire)
+        </.button>
+
+        <!-- Worker Contact Book Access -->
+        <.link href={"/admin/workers/#{@worker.id}/contact"} class="border border-blue-300 text-blue-700 hover:bg-blue-50 transition">
+          View Full Contact Profile / History
+        </.link>
+
+        <!-- Fire Worker Action -->
+        <% if @worker.status != "fired" do %>
+          <.button phx-click="fire_worker" class="bg-red-800 hover:bg-red-900 text-white transition">
+            ⚠️ Deactivate / Fire Worker
+          </.button>
+        <% end %>
+
+      <% else %>
+        <div class="text-gray-500 italic">Access restricted to Administrators.</div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

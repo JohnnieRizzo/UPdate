@@ -1,0 +1,36 @@
+name: Elixir CI Build
+
+on:
+  push:
+    branches: [ main, master ] # Trigger on pushes to primary branches
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Elixir/Erlang environment
+      - name: Set up Erlang/Elixir
+        uses: erlang/elixir-build-core@v1 # Uses the latest compatible version
+
+      # Install dependencies and compile
+      - name: Mix deps.get
+        run: mix deps.get --only prod
+
+      - name: Compile application
+        run: mix compile
+
+      # Optional but recommended: Run tests to ensure stability
+      #- name: Test application
+      #  run: mix test
+
+      # This step simulates your build command from fly.toml for verification
+      - name: Build Assets and Compile (Fly Simulation)
+        run: |
+          mix deps.get --only prod
+          mix compile --local
+          assets
